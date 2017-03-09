@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2015 Red Hat, Inc. and/or its affiliates.
+
+    This file is part of lightblue.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses />.
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+    <relativePath />
+  </parent>
+
+  <groupId>com.redhat.lightblue.togglz</groupId>
+  <artifactId>lightblue-togglz</artifactId>
+  <packaging>bundle</packaging>
+  <version>0.0.2-SNAPSHOT</version>
+  <description>A lightblue state repository for Togglz</description>
+
+  <name>lightblue-togglz: ${project.groupId}|${project.artifactId}</name>
+
+  <prerequisites>
+    <maven>3.0</maven>
+  </prerequisites>
+
+  <licenses>
+    <license>
+      <name>GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007</name>
+      <url>http://www.gnu.org/licenses/gpl-3.0-standalone.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
+  <scm>
+    <connection>scm:git:https://github.com/lightblue-platform/lightblue-togglz.git</connection>
+    <developerConnection>scm:git:git@github.com:lightblue-platform/lightblue-togglz.git</developerConnection>
+    <url>https://github.com/lightblue-platform/lightblue-togglz</url>
+    <tag>HEAD</tag>
+  </scm>
+  
+  <distributionManagement>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+  
+  <properties>
+    <!-- Sonar -->
+    <sonar.exclusions>**/*Test.java,**/*Exception.java,**/com/redhat/lightblue/togglz/test/*.java</sonar.exclusions>
+    <sonar.jdbc.url>jdbc:mysql://127.0.0.1:3306/sonar?useUnicode=true&amp;characterEncoding=utf8&amp;rewriteBatchedStatements=true</sonar.jdbc.url>
+    <sonar.jdbc.username>sonar</sonar.jdbc.username>
+    <sonar.jdbc.password>sonar</sonar.jdbc.password>
+    <sonar.host.url>http://127.0.0.1:8080</sonar.host.url>
+    <sonar.projectName>lightblue-togglz</sonar.projectName>
+    <togglz.core.version>2.2.0.Final</togglz.core.version>
+    <lightblue.client.version>5.9.0</lightblue.client.version>
+    <assertj.version>3.6.2</assertj.version>
+  </properties>
+
+  <dependencies>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-core</artifactId>
+            <version>${togglz.core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.redhat.lightblue.client</groupId>
+            <artifactId>lightblue-client-http</artifactId>
+            <version>${lightblue.client.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.redhat.lightblue.client</groupId>
+            <artifactId>lightblue-client-integration-test</artifactId>
+            <version>${lightblue.client.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>assertj</artifactId>
+            <version>${assertj.version}</version>
+            <scope>test</scope>
+        </dependency>
+    
+
+
+  </dependencies>
+
+  <build>
+    <plugins>
+    
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.5.1</version>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.eluder.coveralls</groupId>
+        <artifactId>coveralls-maven-plugin</artifactId>
+        <version>3.1.0</version>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <format>xml</format>
+          <maxmem>256m</maxmem>
+          <!-- aggregated reports for multi-module projects -->
+          <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
+
+      <!-- to generate the MANIFEST-FILE of the bundle -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>2.5.4</version>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>com.redhat.lightblue.togglz.lightblue-togglz</Bundle-SymbolicName>
+            <Export-Service>org.apache.togglz.spi.ComponentResolver;component=lightblue</Export-Service>
+          </instructions>
+        </configuration>
+      </plugin>
+
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-surefire-plugin</artifactId>
+			<version>2.19.1</version>
+			<configuration>
+				<forkCount>1</forkCount>
+				<reuseForks>false</reuseForks>
+                <skipTests>true</skipTests> <!-- jdk7 will fail if tests are executed because upstream deps are jdk8 only -->
+			</configuration>
+		</plugin>
+      
+    </plugins>
+  </build>
+  
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+        
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-release-plugin</artifactId>
+            <version>2.5.2</version>
+            <configuration>
+              <tagNameFormat>V@{project.version}</tagNameFormat>
+              <autoVersionSubmodules>true</autoVersionSubmodules>
+              <useReleaseProfile>false</useReleaseProfile>
+              <releaseProfiles>release</releaseProfiles>
+              <goals>deploy</goals>
+            </configuration>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.6</version>
+            <configuration>
+              <useAgent>false</useAgent>
+            </configuration>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.5</version>
+            <extensions>true</extensions>
+            <configuration>
+              <serverId>ossrh</serverId>
+              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+              <autoReleaseAfterClose>true</autoReleaseAfterClose>
+            </configuration>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.4</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.10.3</version>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+        <id>java8</id>
+        <activation>
+            <jdk>[1.8,)</jdk>
+        </activation>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <additionalparam>-Xdoclint:none</additionalparam>
+                    </configuration>
+                </plugin>
+                <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-surefire-plugin</artifactId>
+                  <configuration>
+                      <forkCount>1</forkCount>
+                      <reuseForks>false</reuseForks>
+                      <skipTests>false</skipTests> <!-- jdk8 should run tests -->
+                  </configuration>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+  </profiles>
+
+</project>

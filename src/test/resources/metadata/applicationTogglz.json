@@ -1,0 +1,128 @@
+{
+    "entityInfo": {
+        "datastore": {
+            "backend": "mongo",
+            "collection": "applicationTogglz",
+            "datasource": "mongodata"
+        },
+        "defaultVersion": "0.0.1-SNAPSHOT",
+        "indexes": [
+            {
+                "fields": [
+                    {
+                        "caseInsensitive": false,
+                        "dir": "$asc",
+                        "field": "application"
+                    },
+                    {
+                        "caseInsensitive": false,
+                        "dir": "$asc",
+                        "field": "features.*.feature"
+                    }
+                ],
+                "name": "applicationTogglz_application",
+                "unique": true
+            }
+        ],
+        "name": "applicationTogglz"
+    },
+    "schema": {
+        "access": {
+            "delete": [
+                "lb-applicationTogglz-delete"
+            ],
+            "find": [
+                "lb-applicationTogglz-find"
+            ],
+            "insert": [
+                "lb-applicationTogglz-insert"
+            ],
+            "update": [
+                "lb-applicationTogglz-update"
+            ]
+        },
+        "fields": {
+            "_id": {
+                "description": "The primary key of the application togglz.",
+                "type": "string"
+            },
+            "application": {
+                "constraints": {
+                    "required": true
+                },
+                "description": "The application name for the togglz",
+                "type": "string"
+            },
+            "creationDate": {
+                "access": {
+                    "update": [
+                        "noone"
+                    ]
+                },
+                "constraints": {
+                    "required": true
+                },
+                "description": "Date the record was created.  Value always generated on inset",
+                "type": "date",
+                "valueGenerator": {
+                    "type": "CurrentTime"
+                }
+            },
+            "features": {
+                "description": null,
+                "items": {
+                    "fields": {
+                        "feature": {
+                            "constraints": {
+                                "required": true
+                            },
+                            "description": "The textual representation of the feature. This is typically implemented as an enumeration.",
+                            "type": "string"
+                        },
+                        "enabled": {
+                            "constraints": {
+                                "required": true
+                            },
+                            "description": "A flag to enables or disables the feature.",
+                            "type": "boolean"
+                        },
+                        "strategy": {
+                            "description": "Represents a custom strategy for deciding whether a feature is active or not",
+                            "type": "string"
+                        },
+                        "parameters": {
+                            "description": "Optional parameters for the given feature.",
+                            "items": {
+                                "fields": {
+                                    "key": {
+                                        "constraints": {
+                                            "required": true
+                                        },
+                                        "description": "The parameter key",
+                                        "type": "string"
+                                    },
+                                    "value": {
+                                        "description": "The parameter value",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "type": "object"
+                },
+                "type": "array"
+            }
+        },
+        "name": "applicationTogglz",
+        "status": {
+            "value": "active"
+        },
+        "version": {
+            "changelog": "Initial version",
+            "value": "0.0.1-SNAPSHOT"
+        }
+    }
+}
